@@ -1,0 +1,26 @@
+<head>
+  <title>Maps Test</title>
+  <meta name="viewport" content="initial-scale=1.0">
+  <meta charset="utf-8">
+  <!-- <link rel="stylesheet" type="text/css" href="client/css/style.css"> -->
+</head>
+
+<body>
+  <div id="map"></div>
+  <!-- <script type="text/javascript" src="client/js/app.js"></script> -->
+  <script type="text/javascript">
+    var map;
+
+    function initMap() {
+      var myLatLng = new google.maps.LatLng(-34.397, 150.644);
+      var mapOptions = {
+        center: myLatLng,
+        zoom: 8,
+        // mapTypeId: google.maps.MapTypeId.HYBRID
+      }
+
+      map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    }
+  </script>
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA5WN6n6Un8oxxhV3TjJ-p_kaL9CunbCxg&callback=initMap" async defer></script>
+</body>
