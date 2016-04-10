@@ -1,0 +1,76 @@
+<body>
+  <div class="container-fluid full-height">
+    <div class="row full-height">
+
+      <div class="col-lg-3 col-md-3">
+        {{> sidePanel}}
+      </div>
+
+      <div class="col-lg-9 col-md-9 full-height">
+        {{> mapPanel}}
+      </div>
+
+    </div>
+  </div>
+</body>
+
+<template name="mapPanel">
+  {{> googleMap name="map" options=mapOptions}}
+</template>
+
+<template name="sidePanel">
+  <div class="well pad-top">  
+    <div class="row">
+      <label class="col-xs-4">Latitude</label>
+      <input class="col-xs-8" id="latBox">
+    </div>
+
+    <div class="row">
+      <label class="col-xs-4">Longitude</label>
+      <input class="col-xs-8" id="lngBox">
+    </div>
+
+    <div class="row">
+      <button class="btn btn-default col-md-offset-2" id="enterCoords">
+        go
+      </button>
+    </div>
+  </div>  
+
+  <div class="well pad-top">  
+    <div class="row">
+      <label class="col-xs-4">Address</label>
+      <input class="col-xs-8" id="addressBox">
+    </div>
+
+    <div class="row">
+      <button class="btn btn-default col-md-offset-2" id="enterAddress">
+        find
+      </button>
+    </div>
+  </div>  
+
+</template>
+
+<template name="sidePanelForm">
+  <div class="well pad-top">  
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label class="col-xs-4">Latitude</label>
+        <input class="col-xs-8 coord">
+      </div>
+
+      <div class="form-group">
+        <label class="col-xs-4">Longitude</label>
+        <input class="col-xs-8 coord">
+      </div>
+
+
+      <div class="form-group">
+        <button class="btn btn-default col-md-offset-2 enterCoords">
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
+</template>
