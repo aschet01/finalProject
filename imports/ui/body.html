@@ -1,32 +1,67 @@
-<body>
+<template name="appBody">
   <div class="container-fluid full-height">
     <div class="row full-height">
 
       <div class="col-lg-3 col-md-3">
-        {{> sidePanel}}
+        <button class="half-pad-top" id="swapSidePanel">Swap</button>
+        {{> Template.dynamic template=sidePanel}}
       </div>
 
       <div class="col-lg-9 col-md-9 full-height">
-        {{> mapPanel}}
+        {{> Template.dynamic template=mainPanel}}
       </div>
 
     </div>
   </div>
-</body>
+</template>
 
+<!-- mapPanel template for mainPanel -->
 <template name="mapPanel">
   {{> googleMap name="map" options=mapOptions}}
 </template>
 
-<template name="sidePanel">
-  <div class="well pad-top">  
+<!-- groupKit template for sidePanel -->
+<template name="groupKit">
+  <span class="sidePanelMarker" id="groupKitMarker"></span>
+  {{> groupLocations}}
+</template>
+
+<template name="groupLocations">
+  <div class="well half-pad-top">
+    <form class="form-horizontal newLocation">
+
+      {{#each locations}}
+        <div class="form-group">
+          <input class="col-xs-10">
+          <i class="col-xs-2 glyphicon glyphicon-remove"></i>
+        </div>
+      {{/each}}
+
+      <div class="form-group">
+        <label class="col-xs-4">Another</label>
+        <input class="col-xs-8" type="text">
+      </div>
+    </form>
+  </div>  
+</template>
+
+<!-- Initial service testing templates -->
+<template name="testKit">
+  <span class="sidePanelMarker" id="testKitMarker"></span>
+  {{> findLatLng}}
+  {{> findAddress}}
+  {{> getDirections}}
+</template>
+
+<template name="findLatLng">
+  <div class="well half-pad-top">  
     <div class="row">
-      <label class="col-xs-4">Latitude</label>
+      <label class="col-xs-4">Lat</label>
       <input class="col-xs-8" id="latBox">
     </div>
 
     <div class="row">
-      <label class="col-xs-4">Longitude</label>
+      <label class="col-xs-4">Long</label>
       <input class="col-xs-8" id="lngBox">
     </div>
 
@@ -36,7 +71,9 @@
       </button>
     </div>
   </div>  
+</template>
 
+<template name="findAddress">
   <div class="well pad-top">  
     <div class="row">
       <label class="col-xs-4">Address</label>
@@ -48,8 +85,27 @@
         find
       </button>
     </div>
-  </div>  
+  </div>
+</template>
 
+<template name="getDirections">
+  <div class="well pad-top">  
+    <div class="row">
+      <label class="col-xs-4">Start</label>
+      <input class="col-xs-8" id="origin">
+    </div>
+
+    <div class="row">
+      <label class="col-xs-4">End</label>
+      <input class="col-xs-8" id="destination">
+    </div>
+
+    <div class="row">
+      <button class="btn btn-default col-md-offset-2" id="getDirections">
+        go
+      </button>
+    </div>
+  </div>  
 </template>
 
 <template name="sidePanelForm">

@@ -8,6 +8,10 @@ html, body {
   height: 100%;
 }
 
+.half-pad-top {
+  margin-top: 10%;
+}
+
 .pad-top {
   margin-top: 20%;
 }
