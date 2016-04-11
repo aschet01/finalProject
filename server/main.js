@@ -1,0 +1,1 @@
+import '../imports/api/locations/locations.js';
