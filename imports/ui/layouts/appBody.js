@@ -1,7 +1,14 @@
+// imports/ui/layouts/appBody.js
+// Called from imports/ui/sstartup/client/routes.js
+
 import { Template } from 'meteor/templating';
-import { Locations } from '../api/locations/locations.js';
-import './body.html';
-import './body.css';
+import { Locations } from '../../api/locations/locations.js';
+
+import './appBody.html';
+import './appBody.css';
+import '../components/mapPanel/mapPanel.js';
+
+
 
 Meteor.startup( function () {
   GoogleMaps.load({key: "AIzaSyA5WN6n6Un8oxxhV3TjJ-p_kaL9CunbCxg"});
@@ -15,7 +22,6 @@ Template.groupLocations.helpers({
 
 Template.groupKit.events({
   "submit .newLocation": function(event) {
-    console.log("event detected");
     event.preventDefault();
     const target = event.target;
     const newLocation = target.value;

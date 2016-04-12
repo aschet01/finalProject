@@ -1,3 +1,8 @@
+// imports/startup/client/routes.js
+// Called from imports/startup/client/index.js
+
+import "../../ui/layouts/appBody.js";
+
 FlowRouter.route('/', {
   name: "home",
   action() {
