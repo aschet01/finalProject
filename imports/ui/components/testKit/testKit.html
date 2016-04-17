@@ -1,0 +1,65 @@
+<!-- imports/ui/components/testKit/testKit.html -->
+<!-- Called by imports/ui/components/testKit/testKit.js -->
+
+<!-- Initial service testing templates -->
+<template name="testKit">
+  <span class="sidePanelMarker" id="testKitMarker"></span>
+  {{> findLatLng}}
+  {{> findAddress}}
+  {{> getDirections}}
+</template>
+
+<template name="findLatLng">
+  <div class="well half-pad-top">  
+    <div class="row">
+      <label class="col-xs-4">Lat</label>
+      <input class="col-xs-8" id="latBox">
+    </div>
+
+    <div class="row">
+      <label class="col-xs-4">Long</label>
+      <input class="col-xs-8" id="lngBox">
+    </div>
+
+    <div class="row">
+      <button class="btn btn-default col-md-offset-2" id="enterCoords">
+        Go
+      </button>
+    </div>
+  </div>  
+</template>
+
+<template name="findAddress">
+  <div class="well pad-top">  
+    <div class="row">
+      <label class="col-xs-4">Address</label>
+      <input class="col-xs-8" id="addressBox">
+    </div>
+
+    <div class="row">
+      <button class="btn btn-default col-md-offset-2" id="enterAddress">
+        Go
+      </button>
+    </div>
+  </div>
+</template>
+
+<template name="getDirections">
+  <div class="well pad-top">
+      <div class="row">
+      <label class="col-xs-4">Start</label>
+      <input class="col-xs-8" id="origin">
+    </div>
+
+    <div class="row">
+      <label class="col-xs-4">End</label>
+      <input class="col-xs-8" id="destination">
+    </div>
+
+    <div class="row">
+      <button class="btn btn-default col-md-offset-2" id="getDirections">
+        Go
+      </button>
+    </div>
+  </div>  
+</template>

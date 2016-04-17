@@ -5,12 +5,12 @@
   <div class="container-fluid full-height">
     <div class="row full-height">
 
-      <div class="col-lg-3 col-md-3">
+      <div class="col-lg-3 col-md-3 full-height sidePanel-box">
         <button class="half-pad-top" id="swapSidePanel">Swap</button>
         {{> Template.dynamic template=sidePanel}}
       </div>
 
-      <div class="col-lg-9 col-md-9 full-height">
+      <div class="col-lg-9 col-md-9 full-height mainPanel-box">
         {{> Template.dynamic template=mainPanel}}
       </div>
 
@@ -18,96 +18,7 @@
   </div>
 </template>
 
-<!-- groupKit template for sidePanel -->
-<template name="groupKit">
-  <span class="sidePanelMarker" id="groupKitMarker"></span>
-  {{> groupLocations}}
-</template>
-
-<template name="groupLocations">
-  <div class="well half-pad-top">
-
-    {{#each locations}}
-      <form class="form-horizontal existingLocation">
-        <div class="form-group">
-          <input class="col-xs-10" value={{location}}>
-          <i class="col-xs-2 glyphicon glyphicon-remove removeLocation"></i>
-        </div>
-      </form>
-    {{/each}}
-
-    <form class="form-horizontal newLocation">
-      <div class="form-group">
-        <label class="col-xs-3">New</label>
-        <input class="col-xs-8" type="text" id="newLocationBox">
-      </div>
-    </form>
-  </div>  
-</template>
-
-<!-- Initial service testing templates -->
-<template name="testKit">
-  <span class="sidePanelMarker" id="testKitMarker"></span>
-  {{> findLatLng}}
-  {{> findAddress}}
-  {{> getDirections}}
-</template>
-
-<template name="findLatLng">
-  <div class="well half-pad-top">  
-    <div class="row">
-      <label class="col-xs-4">Lat</label>
-      <input class="col-xs-8" id="latBox">
-    </div>
-
-    <div class="row">
-      <label class="col-xs-4">Long</label>
-      <input class="col-xs-8" id="lngBox">
-    </div>
-
-    <div class="row">
-      <button class="btn btn-default col-md-offset-2" id="enterCoords">
-        go
-      </button>
-    </div>
-  </div>  
-</template>
-
-<template name="findAddress">
-  <div class="well pad-top">  
-    <div class="row">
-      <label class="col-xs-4">Address</label>
-      <input class="col-xs-8" id="addressBox">
-    </div>
-
-    <div class="row">
-      <button class="btn btn-default col-md-offset-2" id="enterAddress">
-        find
-      </button>
-    </div>
-  </div>
-</template>
-
-<template name="getDirections">
-  <div class="well pad-top">  
-    <div class="row">
-      <label class="col-xs-4">Start</label>
-      <input class="col-xs-8" id="origin">
-    </div>
-
-    <div class="row">
-      <label class="col-xs-4">End</label>
-      <input class="col-xs-8" id="destination">
-    </div>
-
-    <div class="row">
-      <button class="btn btn-default col-md-offset-2" id="getDirections">
-        go
-      </button>
-    </div>
-  </div>  
-</template>
-
+<!-- First prototype form for test kit -->
 <template name="sidePanelForm">
   <div class="well pad-top">  
     <form class="form-horizontal">

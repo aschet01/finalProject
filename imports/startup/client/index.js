@@ -3,3 +3,8 @@
 // Point of origin for client code
 
 import './routes.js'
+
+Meteor.startup( function() {
+  GoogleMaps.load({key: "AIzaSyA5WN6n6Un8oxxhV3TjJ-p_kaL9CunbCxg"});
+  console.log("GoogleMaps loaded");
+});

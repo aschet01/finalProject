@@ -1,4 +1,4 @@
 // client/main.js
-// Calls client code
+// Run by client. Calls client code from imports
 
 import '../imports/startup/client'
