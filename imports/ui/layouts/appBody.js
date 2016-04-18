@@ -34,7 +34,7 @@ Template.mapPanel.helpers({
   mapOptions: function () {
     if (GoogleMaps.loaded()) {
       return {
-        center: new google.maps.LatLng(-34.397, 150.644),
+        center: new google.maps.LatLng(41.3, -72.9),
         zoom: 8
       };
     }
