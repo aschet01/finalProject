@@ -1,5 +1,5 @@
 // imports/ui/layouts/appBody.js
-// Called from imports/ui/sstartup/client/routes.js
+// Called from imports/ui/startup/client/index.js
 
 // import { Template } from 'meteor/templating';
 import { Locations } from '../../api/locations/locations.js';
@@ -33,13 +33,10 @@ Template.appBody.events({
 Template.mapPanel.helpers({
   mapOptions: function () {
     if (GoogleMaps.loaded()) {
-      console.log("Map options passed");
       return {
         center: new google.maps.LatLng(-34.397, 150.644),
         zoom: 8
       };
-    } else {
-      console.log("GoogleMaps not loaded");
     }
   }
 });
