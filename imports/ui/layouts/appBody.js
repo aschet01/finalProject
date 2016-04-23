@@ -2,7 +2,6 @@
 // Called from imports/ui/startup/client/index.js
 
 // import { Template } from 'meteor/templating';
-import { Locations } from '../../api/locations/locations.js';
 
 import './appBody.html';
 import './appBody.css';
@@ -35,7 +34,7 @@ Template.mapPanel.helpers({
     if (GoogleMaps.loaded()) {
       return {
         center: new google.maps.LatLng(41.3, -72.9),
-        zoom: 8
+        zoom: 9
       };
     }
   }
