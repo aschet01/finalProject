@@ -89,17 +89,23 @@ function updateCenter() {
     count += 1;
   }
 
-  var center = new google.maps.LatLng(latSum/count, lngSum/count);
-  console.log(centerMarker);
-
-  if (centerMarker instanceof google.maps.Marker) {
-    centerMarker.setPosition(center);
-  } else {
-    centerMarker = new google.maps.Marker({
-      position: center,
-      map: GoogleMaps.maps.map.instance
-    });
+  if (count === 0) {
+    return;
+  } else if (centerMarker instanceof google.maps.Marker) {
+    centerMarker.setMap(null);
+    if (count === 1) {
+      return;
+    }
   }
+
+  var center = new google.maps.LatLng(latSum/count, lngSum/count);
+
+  centerMarker = new google.maps.Marker({
+    position: center,
+    map: GoogleMaps.maps.map.instance,
+    animation: google.maps.Animation.DROP
+  });
+
 }
 
 
