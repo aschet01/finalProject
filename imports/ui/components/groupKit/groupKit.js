@@ -18,6 +18,32 @@ Template.groupLocations.helpers({
 
 GoogleMaps.ready('map', function(map){
   geocoder = new google.maps.Geocoder();
+  placesService = new google.maps.places.PlacesService(GoogleMaps.maps.map.instance);
+
+  Markers.find().observe({
+    added: function (document) {
+      var marker = new google.maps.Marker({
+        position: new google.maps.LatLng(document.lat, document.lng),
+        map: GoogleMaps.maps.map.instance,
+      });
+      markers[document._id] = marker;
+      updateCenter();
+    },
+
+    changed: function (document) {
+      var marker = markers[document._id];
+      const newPosition = new google.maps.LatLng(document.lat, document.lng);
+      marker.setPosition(newPosition);
+      GoogleMaps.maps.map.instance.panTo(newPosition);
+      updateCenter();
+    },
+
+    removed: function (document) {
+      markers[document._id].setMap(null);
+      delete markers[document._id];
+      updateCenter();
+    }
+  });
 });
 
 Template.groupLocations.events({
@@ -54,33 +80,6 @@ Template.groupLocations.events({
 });
 
 
-Markers.find().observe({
-  added: function (document) {
-    var marker = new google.maps.Marker({
-      position: new google.maps.LatLng(document.lat, document.lng),
-      map: GoogleMaps.maps.map.instance,
-    });
-    markers[document._id] = marker;
-    updateCenter();
-  },
-
-  changed: function (document) {
-    var marker = markers[document._id];
-    const newPosition = new google.maps.LatLng(document.lat, document.lng);
-    marker.setPosition(newPosition);
-    GoogleMaps.maps.map.instance.panTo(newPosition);
-    updateCenter();
-  },
-
-  removed: function (document) {
-    markers[document._id].setMap(null);
-    delete markers[document._id];
-    updateCenter();
-  }
-});
-
-// function () {}
-
 // Finds and places a marker at the geographic center (mean) Location
 function updateCenter() {
   var latSum = 0;
@@ -94,10 +93,11 @@ function updateCenter() {
     count += 1;
   }
 
+  if (centerMarker instanceof google.maps.Marker) {
+    centerMarker.setMap(null);
+  }
+
   if (count <= 1) {
-    if (centerMarker instanceof google.maps.Marker) {
-      centerMarker.setMap(null);
-    }
     return;
   }
 
@@ -115,7 +115,23 @@ function updateCenter() {
     animation: google.maps.Animation.DROP,
     icon: markerImage
   });
+
+  placesService.nearbySearch({
+    location: center,
+    radius: 200
+  }, readPlaces);
 }
+
+
+// PlacesService callback function
+function readPlaces(results, status) {
+  if (status === google.maps.places.PlacesServiceStatus.OK) {
+    console.log(results);
+  } else {
+    console.log("Places service failed: ", status);
+  }
+}
+
 
 // Geocoding callback functions
 function newLocationandMarker(address, results, status) {
