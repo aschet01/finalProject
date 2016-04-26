@@ -16,6 +16,10 @@ Template.groupLocations.helpers({
   }
 });
 
+GoogleMaps.ready('map', function(map){
+  geocoder = new google.maps.Geocoder();
+});
+
 Template.groupLocations.events({
   "submit .newLocation": function(event) {
     event.preventDefault();
@@ -23,7 +27,6 @@ Template.groupLocations.events({
     const inputField = document.getElementById("newLocationBox");
     const inputAddress = inputField.value;
 
-    const geocoder = new google.maps.Geocoder();
     geocoder.geocode({'address': inputAddress}, function(results, status) {
         newLocationandMarker(inputAddress, results, status);
     });
@@ -36,9 +39,8 @@ Template.groupLocations.events({
 
     const modifiedForm = event.target;
     const inputAddress = modifiedForm.getElementsByTagName("input")[0].value;
-
     const docId = this._id
-    const geocoder = new google.maps.Geocoder();
+
     geocoder.geocode({address: inputAddress},
       function(results, status, address=inputAddress, locationId=docId) {
         changeLocationandMarker(address, locationId, results, status);
@@ -77,6 +79,9 @@ Markers.find().observe({
   }
 });
 
+// function () {}
+
+// Finds and places a marker at the geographic center (mean) Location
 function updateCenter() {
   var latSum = 0;
   var lngSum = 0;
@@ -89,25 +94,28 @@ function updateCenter() {
     count += 1;
   }
 
-  if (count === 0) {
-    return;
-  } else if (centerMarker instanceof google.maps.Marker) {
-    centerMarker.setMap(null);
-    if (count === 1) {
-      return;
+  if (count <= 1) {
+    if (centerMarker instanceof google.maps.Marker) {
+      centerMarker.setMap(null);
     }
+    return;
   }
 
   var center = new google.maps.LatLng(latSum/count, lngSum/count);
+  var markerImage = {
+    url: "flag.png",
+    size: new google.maps.Size(20, 32),
+    origin: new google.maps.Point(0, 0),
+    anchor: new google.maps.Point(0, 32)
+  };
 
   centerMarker = new google.maps.Marker({
     position: center,
     map: GoogleMaps.maps.map.instance,
-    animation: google.maps.Animation.DROP
+    animation: google.maps.Animation.DROP,
+    icon: markerImage
   });
-
 }
-
 
 // Geocoding callback functions
 function newLocationandMarker(address, results, status) {
@@ -121,17 +129,17 @@ function newLocationandMarker(address, results, status) {
       createdAt: new Date(),
       coords: newCoords
     }
-    Locations.insert(newLocation);
+    // Get the new _id for the matching marker
+    const newId = Locations.insert(newLocation);
 
     //  Create Marker document 
-    const newId = Locations.findOne({createdAt: newLocation.createdAt})["_id"];
     const newLat = newCoords.lat();
     const newLng = newCoords.lng();
 
     Markers.insert({_id: newId, lat: newLat, lng: newLng});
 
   } else {
-    alert("Geocoding was not successful: " + status);
+    alert("Could not place address: " + status);
   }
 }
 
@@ -145,6 +153,6 @@ function changeLocationandMarker(address, locationId, results, status) {
                    {$set: {lat: newCoords.lat(), lng: newCoords.lng()}});
 
   } else {
-    alert("Geocoding was not successful: " + status);
+    alert("Could not place address: " + status);
   }
 }
