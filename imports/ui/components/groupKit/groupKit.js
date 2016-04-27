@@ -3,6 +3,7 @@
 
 import { Locations } from '../../../api/locations/locations.js'
 import { Markers } from '../../../api/markers/markers.js';
+import { Places } from '../../../api/places/places.js';
 import './groupKit.html';
 
 // Dictionary to hold Marker objeccts referenced by 
@@ -13,6 +14,12 @@ var centerMarker = {};
 Template.groupLocations.helpers({
   locations: function() {
     return Locations.find({});
+  }
+});
+
+Template.placeList.helpers({
+  places: function() {
+    return Places.find({});
   }
 });
 
@@ -126,12 +133,30 @@ function updateCenter() {
 // PlacesService callback function
 function readPlaces(results, status) {
   if (status === google.maps.places.PlacesServiceStatus.OK) {
+    clearPlaces();
+
+    for (x in results) {
+      var currPlace = results[x];
+      Places.insert({name: currPlace.name})
+    }
     console.log(results);
   } else {
     console.log("Places service failed: ", status);
   }
 }
 
+// Called from updateCenter
+function clearPlaces() {
+  var ids = [];
+  const placeList = Places.find().fetch();
+  for (x in placeList) {
+    ids.push(placeList[x]._id);
+  }
+
+  for (x in ids) {
+    Places.remove({_id: ids[x]});
+  }
+}
 
 // Geocoding callback functions
 function newLocationandMarker(address, results, status) {

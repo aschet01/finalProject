@@ -5,25 +5,38 @@
 <template name="groupKit">
   <span class="sidePanelMarker" id="groupKitMarker"></span>
   {{> groupLocations}}
+  {{> placeList}}
 </template>
 
 <template name="groupLocations">
-  <div class="well half-pad-top">
+  <div class="well-wrapper">
+    <div class="well half-pad-top">
 
-    {{#each locations}}
-      <form class="form-horizontal existingLocation">
+      {{#each locations}}
+        <form class="form-horizontal existingLocation">
+          <div class="form-group">
+            <input class="col-xs-10" value={{location}}>
+            <i class="col-xs-2 glyphicon glyphicon-remove removeLocation"></i>
+          </div>
+        </form>
+      {{/each}}
+
+      <form class="form-horizontal newLocation">
         <div class="form-group">
-          <input class="col-xs-10" value={{location}}>
-          <i class="col-xs-2 glyphicon glyphicon-remove removeLocation"></i>
+          <label class="col-xs-3">New</label>
+          <input class="col-xs-8" type="text" id="newLocationBox">
         </div>
       </form>
-    {{/each}}
-
-    <form class="form-horizontal newLocation">
-      <div class="form-group">
-        <label class="col-xs-3">New</label>
-        <input class="col-xs-8" type="text" id="newLocationBox">
-      </div>
-    </form>
+    </div>
   </div>  
+</template>
+
+<template name="placeList">
+  <div class="well half-pad-top">
+
+    {{#each places}}
+      <p>{{name}}</p>
+    {{/each}}
+    
+  </div>
 </template>
