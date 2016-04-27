@@ -125,7 +125,8 @@ function updateCenter() {
 
   placesService.nearbySearch({
     location: center,
-    radius: 200
+    radius: 1000,
+    type: "restaurant"
   }, readPlaces);
 }
 
