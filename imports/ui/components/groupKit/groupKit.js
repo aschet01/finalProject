@@ -10,6 +10,7 @@ import './groupKit.html';
 //   documents in Markers collection
 var markers = {};
 var centerMarker = {};
+var currentPlace = {};
 
 Template.groupLocations.helpers({
   locations: function() {
@@ -19,7 +20,7 @@ Template.groupLocations.helpers({
 
 Template.placeList.helpers({
   places: function() {
-    return Places.find({});
+    return Places.find({}, {limit: 8});
   }
 });
 
@@ -51,6 +52,7 @@ GoogleMaps.ready('map', function(map){
       updateCenter();
     }
   });
+  clearPlaces();
 });
 
 Template.groupLocations.events({
@@ -86,6 +88,23 @@ Template.groupLocations.events({
   }
 });
 
+Template.placeList.events({
+  "click .list-group-item": function (event) {
+    if (currentPlace instanceof google.maps.Marker) {
+      currentPlace.setMap(null);
+      delete currentPlace;
+    }
+
+    console.log(this);
+    console.log(this.geometry);
+    console.log(this.geometry.location);
+    currentPlace = new google.maps.Marker({
+      position: this.geometry.location,
+      map: GoogleMaps.maps.map.instance
+    });
+  }
+});
+
 
 // Finds and places a marker at the geographic center (mean) Location
 function updateCenter() {
@@ -100,15 +119,21 @@ function updateCenter() {
     count += 1;
   }
 
+  var center = new google.maps.LatLng(latSum/count, lngSum/count);
+
   if (centerMarker instanceof google.maps.Marker) {
     centerMarker.setMap(null);
+
+    if (center.lat() == centerMarker.position.lat()) {
+      console.log("Duplicate center calculated");
+      return;
+    }
   }
 
   if (count <= 1) {
     return;
   }
 
-  var center = new google.maps.LatLng(latSum/count, lngSum/count);
   var markerImage = {
     url: "flag.png",
     size: new google.maps.Size(20, 32),
@@ -125,22 +150,20 @@ function updateCenter() {
 
   placesService.nearbySearch({
     location: center,
-    radius: 1000,
-    type: "restaurant"
+    radius: 500,
+    type: "food"
   }, readPlaces);
 }
 
 
 // PlacesService callback function
 function readPlaces(results, status) {
+  clearPlaces();
   if (status === google.maps.places.PlacesServiceStatus.OK) {
-    clearPlaces();
-
-    for (x in results) {
+    for (x in results.slice(0,8)) {
       var currPlace = results[x];
-      Places.insert({name: currPlace.name})
+      Places.insert(currPlace);
     }
-    console.log(results);
   } else {
     console.log("Places service failed: ", status);
   }

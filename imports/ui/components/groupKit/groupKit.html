@@ -36,12 +36,15 @@
 <template name="placeList">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h3 class="panel-title">Panel heading</h3>
+      <h3 class="panel-title">Nearby Places</h3>
     </div>
 
     <ul class="list-group">
       {{#each places}}
-        <li class="list-group-item">{{name}}</li>
+        <li class="list-group-item">
+          {{name}}<br>
+          {{vicinity}}<br>
+        </li>
       {{/each}}
     </ul>
   </div>
