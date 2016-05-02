@@ -8,9 +8,15 @@ import './groupKit.html';
 
 // Dictionary to hold Marker objeccts referenced by 
 //   documents in Markers collection
-var markers = {};
-var centerMarker = {};
-var currentPlace = {};
+let markers = {};
+let centerMarker = {};
+let currentPlace = {};
+let placeSearchOptions = {
+  location: "",
+  radius: 2000,
+  type: "food"
+};
+
 
 Template.groupLocations.helpers({
   locations: function() {
@@ -28,9 +34,16 @@ GoogleMaps.ready('map', function(map){
   geocoder = new google.maps.Geocoder();
   placesService = new google.maps.places.PlacesService(GoogleMaps.maps.map.instance);
 
+  flagMarkerImage = {
+    url: "flag.png",
+    size: new google.maps.Size(20, 32),
+    origin: new google.maps.Point(0, 0),
+    anchor: new google.maps.Point(0, 32)
+  };
+
   Markers.find().observe({
     added: function (document) {
-      var marker = new google.maps.Marker({
+      let marker = new google.maps.Marker({
         position: new google.maps.LatLng(document.lat, document.lng),
         map: GoogleMaps.maps.map.instance,
       });
@@ -39,7 +52,7 @@ GoogleMaps.ready('map', function(map){
     },
 
     changed: function (document) {
-      var marker = markers[document._id];
+      let marker = markers[document._id];
       const newPosition = new google.maps.LatLng(document.lat, document.lng);
       marker.setPosition(newPosition);
       GoogleMaps.maps.map.instance.panTo(newPosition);
@@ -105,64 +118,63 @@ Template.placeList.events({
   }
 });
 
+function placeSearch(point) {
+  placeSearchOptions.location = point;
+  placesService.nearbySearch(placeSearchOptions, readPlaces);
+}
 
 // Finds and places a marker at the geographic center (mean) Location
 function updateCenter() {
-  var latSum = 0;
-  var lngSum = 0;
-  var count = 0;
-
-  for (x in markers) {
-    var coords = markers[x].getPosition();
-    latSum += coords.lat();
-    lngSum += coords.lng();
-    count += 1;
-  }
-
-  var center = new google.maps.LatLng(latSum/count, lngSum/count);
-
   if (centerMarker instanceof google.maps.Marker) {
     centerMarker.setMap(null);
-
-    if (center.lat() == centerMarker.position.lat()) {
-      console.log("Duplicate center calculated");
-      return;
-    }
   }
 
-  if (count <= 1) {
+  const center = getMarkerMean();
+
+  if (center === null) {
     return;
   }
-
-  var markerImage = {
-    url: "flag.png",
-    size: new google.maps.Size(20, 32),
-    origin: new google.maps.Point(0, 0),
-    anchor: new google.maps.Point(0, 32)
-  };
 
   centerMarker = new google.maps.Marker({
     position: center,
     map: GoogleMaps.maps.map.instance,
     animation: google.maps.Animation.DROP,
-    icon: markerImage
+    icon: flagMarkerImage
   });
 
-  placesService.nearbySearch({
-    location: center,
-    radius: 500,
-    type: "food"
-  }, readPlaces);
+  placeSearch(center);
 }
 
+function getMarkerMean() {
+  let latSum = 0, lngSum = 0, count = 0;
+
+  for (x in markers) {
+    let coords = markers[x].getPosition();
+    latSum += coords.lat();
+    lngSum += coords.lng();
+    count += 1;
+  }
+
+  if (count <= 1) {
+    return null;
+  } else {
+    return new google.maps.LatLng(latSum/count, lngSum/count);
+  }
+}
 
 // PlacesService callback function
 function readPlaces(results, status) {
   clearPlaces();
+
   if (status === google.maps.places.PlacesServiceStatus.OK) {
-    for (x in results.slice(0,8)) {
-      var currPlace = results[x];
-      Places.insert(currPlace);
+    let currPlace;
+    for (x in results) {
+      currPlace = results[x];
+      if (Places.find({name: currPlace.name}).fetch() !== {}) {
+        Places.insert(currPlace);
+      } else {
+        console.log("Duplicate blocked");
+      }
     }
   } else {
     console.log("Places service failed: ", status);
@@ -171,7 +183,7 @@ function readPlaces(results, status) {
 
 // Called from updateCenter
 function clearPlaces() {
-  var ids = [];
+  let ids = [];
   const placeList = Places.find().fetch();
   for (x in placeList) {
     ids.push(placeList[x]._id);
@@ -189,7 +201,7 @@ function newLocationandMarker(address, results, status) {
     GoogleMaps.maps.map.instance.panTo(newCoords);
     
     // Create Location document with result coordinates
-    var newLocation = {
+    let newLocation = {
       location: address,
       createdAt: new Date(),
       coords: newCoords

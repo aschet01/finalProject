@@ -28,7 +28,7 @@ Template.appBody.events({
   }
 });
 
-// I'd like to moev this to mapPanel.js, but I haven't gotten that working
+// I'd like to move this to mapPanel.js, but I haven't gotten that working
 Template.mapPanel.helpers({
   mapOptions: function () {
     if (GoogleMaps.loaded()) {
