@@ -132,6 +132,7 @@ function updateCenter() {
   const center = getMarkerMean();
 
   if (center === null) {
+    clearPlaces();
     return;
   }
 

@@ -13,7 +13,7 @@ html, body {
 }
 
 .half-pad-top {
-  margin-top: 10%;
+  margin-top: 6%;
 }
 
 .pad-top {
@@ -28,8 +28,14 @@ html, body {
   margin-bottom: 0;
 }
 
-.well-wrapper {
-  min-height: 30%;
-  max-height: 40%;
+.med-height-wrapper {
+  height: 40vh;
+  max-height: 40vh;
+  overflow: auto;
+}
+
+.med-height-area {
+  min-height: 30vh;
+  max-height: 40vh;
   overflow: auto;
 }
