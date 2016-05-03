@@ -27,15 +27,3 @@ Template.appBody.events({
     }
   }
 });
-
-// I'd like to move this to mapPanel.js, but I haven't gotten that working
-Template.mapPanel.helpers({
-  mapOptions: function () {
-    if (GoogleMaps.loaded()) {
-      return {
-        center: new google.maps.LatLng(41.3, -72.9),
-        zoom: 9
-      };
-    }
-  }
-});
