@@ -11,6 +11,7 @@ import './groupKit.html';
 let markers = {};
 let centerMarker = {};
 let currentPlace = {};
+let activeArea = {};
 let placeSearchOptions = {
   location: "",
   radius: 2000,
@@ -133,6 +134,7 @@ function updateCenter() {
 
   if (center === null) {
     clearPlaces();
+    clearPolygon();
     return;
   }
 
@@ -143,6 +145,7 @@ function updateCenter() {
     icon: flagMarkerImage
   });
 
+  updatePolygon();
   placeSearch(center);
 }
 
@@ -160,6 +163,48 @@ function getMarkerMean() {
     return null;
   } else {
     return new google.maps.LatLng(latSum/count, lngSum/count);
+  }
+}
+
+function updatePolygon() {
+  // var triangleCoords = [
+  //   {lat: 25.774, lng: -80.190},
+  //   {lat: 18.466, lng: -66.118},
+  //   {lat: 32.321, lng: -64.757},
+  //   {lat: 25.774, lng: -80.190}
+  // ];
+
+  // var bermudaTriangle = new google.maps.Polygon({
+  //   paths: triangleCoords,
+  //   strokeColor: '#FF0000',
+  //   strokeOpacity: 0.8,
+  //   strokeWeight: 2,
+  //   fillColor: '#FF0000',
+  //   fillOpacity: 0.35
+  // });
+  // bermudaTriangle.setMap(GoogleMaps.maps.map.instance);
+
+  clearPolygon();
+
+  let coords = [];
+  const markers = Markers.find().fetch();
+
+  for (x in markers) {
+    const currMarker = markers[x];
+    let currCoords = {lat: currMarker.lat, lng: currMarker.lng};
+    console.log(currCoords);
+    coords.push(currCoords);
+  }
+
+  activeArea = new google.maps.Polygon({
+    paths: coords
+  });
+  activeArea.setMap(GoogleMaps.maps.map.instance);
+}
+
+function clearPolygon() {
+  if (activeArea instanceof google.maps.Polygon) {
+    activeArea.setMap(null);
   }
 }
 
