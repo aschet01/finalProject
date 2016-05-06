@@ -28,6 +28,10 @@ Template.groupLocations.helpers({
 Template.placeList.helpers({
   places: function() {
     return Places.find({}, {limit: 8});
+  },
+
+  activePlaceType: function() {
+    return document.getElementsByClassName("activePlaceType")[0].htmlInner();
   }
 });
 
@@ -192,7 +196,6 @@ function updatePolygon() {
   for (x in markers) {
     const currMarker = markers[x];
     let currCoords = {lat: currMarker.lat, lng: currMarker.lng};
-    console.log(currCoords);
     coords.push(currCoords);
   }
 

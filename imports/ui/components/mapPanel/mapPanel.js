@@ -9,9 +9,10 @@ Template.mapPanel.helpers({
     if (GoogleMaps.loaded()) {
       const centralizeStyles = [
         {
-          featureType: "all",
+          featureType: "road",
+          elementType: "geometry",
           stylers: [
-            { saturation: -80 }
+            { saturation: -60 }
           ]
         },{
           featureType: "road.arterial",

@@ -39,3 +39,11 @@ html, body {
   max-height: 40vh;
   overflow: auto;
 }
+
+.panel-heading > * {
+  display: inline-block;
+}
+
+.panel-heading > .dropdown {
+  padding-left: 20%;
+}
