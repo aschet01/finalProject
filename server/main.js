@@ -1,3 +1,4 @@
-import '../imports/api/locations/locations.js';
-import '../imports/api/markers/markers.js';
-import '../imports/api/places/places.js';
+// server/main.js
+// Run by server. Calls server code from imports
+
+import '../imports/startup/server/index.js';
