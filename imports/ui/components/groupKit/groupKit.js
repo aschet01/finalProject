@@ -28,11 +28,11 @@ Template.groupLocations.helpers({
 Template.placeList.helpers({
   places: function() {
     return Places.find({}, {limit: 8});
-  },
+  }//,
 
-  activePlaceType: function() {
-    return document.getElementsByClassName("activePlaceType")[0].htmlInner();
-  }
+  // activePlaceType: function() {
+  //   return document.getElementsByClassName("activePlaceType")[0].htmlInner();
+  // }
 });
 
 GoogleMaps.ready('map', function(map){
@@ -53,6 +53,8 @@ GoogleMaps.ready('map', function(map){
         map: GoogleMaps.maps.map.instance,
       });
       markers[document._id] = marker;
+
+      zoomToMarkers();
       updateCenter();
     },
 
@@ -60,13 +62,16 @@ GoogleMaps.ready('map', function(map){
       let marker = markers[document._id];
       const newPosition = new google.maps.LatLng(document.lat, document.lng);
       marker.setPosition(newPosition);
-      GoogleMaps.maps.map.instance.panTo(newPosition);
+
+      zoomToMarkers();
       updateCenter();
     },
 
     removed: function (document) {
       markers[document._id].setMap(null);
       delete markers[document._id];
+
+      zoomToMarkers();
       updateCenter();
     }
   });
@@ -247,7 +252,6 @@ function clearPlaces() {
 function newLocationandMarker(address, results, status) {
   if (status === google.maps.GeocoderStatus.OK) {
     const newCoords = results[0].geometry.location;
-    GoogleMaps.maps.map.instance.panTo(newCoords);
     
     // Create Location document with result coordinates
     let newLocation = {
@@ -281,4 +285,81 @@ function changeLocationandMarker(address, locationId, results, status) {
   } else {
     alert("Could not place address: " + status);
   }
+}
+
+function zoomToMarkers() {
+  const newBounds = getNewBounds();
+
+  if (newBounds !== null) {
+    const myMap = GoogleMaps.maps.map.instance;
+    myMap.fitBounds(newBounds);
+    console.log("Map:", myMap.getBounds());
+    console.log("Planned:", newBounds);
+  }
+}
+
+function getNewBounds() {
+  const markerRange = getMarkerBounds();
+  const multipleMarkers = (markerRange.minLat !== markerRange.maxLat ||
+                            markerRange.minLng !== markerRange.maxLng);
+
+  if (markerRange === null) {
+    return null;
+  } else if (multipleMarkers) {
+    const latRange = markerRange.maxLat - markerRange.minLat,
+      lngRange = markerRange.maxLng - markerRange.minLng;
+
+    // displayMargin: The ratio of the marker range to add
+    //   to the edges of the view map view
+    const displayMargin = .1;
+
+    const displayMinLat = markerRange.minLat - displayMargin*latRange,
+      displayMaxLat = markerRange.maxLat + displayMargin*latRange,
+      displayMinLng = markerRange.minLng - displayMargin*lngRange,
+      displayMaxLng = markerRange.maxLng + displayMargin*lngRange;
+
+    return new google.maps.LatLngBounds(
+      new google.maps.LatLng(displayMinLat, displayMinLng),
+      new google.maps.LatLng(displayMaxLat, displayMaxLng)
+    );
+  } else {
+    // Case for single Marker...
+    return null;
+  }
+}
+
+function getMarkerBounds() {
+  let minLat = 100, maxLat = 0, minLng = 0, maxLng = 0;
+  const currMarkers = Markers.find().fetch();
+  for (x in currMarkers) {
+    const currLat = currMarkers[x].lat, currLng = currMarkers[x].lng;
+
+    // Set initial values to first marker
+    if (minLat === 100) {
+      minLat = currLat; maxLat = currLat;
+      minLng = currLng; maxLng = currLng;  
+
+    } else {
+      // Compare current Latitude
+      if (currLat < minLat) {
+        minLat = currLat;
+      } else if (currLat > maxLat) {
+        maxLat = currLat;
+      }
+
+      // Compare current Longitude
+      if (currLng < minLng) {
+        minLng = currLng;
+      } else if (currLng > maxLng) {
+        maxLng = currLng;
+      }
+    }
+  }
+
+  return (minLat !== 100 ? {
+    minLat: minLat,
+    maxLat: maxLat,
+    minLng: minLng,
+    maxLng: maxLng
+  } : null);
 }
