@@ -7,7 +7,7 @@ import "../../ui/layouts/appBody.js";
 
 Meteor.startup( function() {
   GoogleMaps.load({
-    key: Meteor.settings.public.apiKey,
+    key: "AIzaSyA5WN6n6Un8oxxhV3TjJ-p_kaL9CunbCxg",
     libraries: "places"
   });
 });
