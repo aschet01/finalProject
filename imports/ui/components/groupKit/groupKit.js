@@ -183,18 +183,22 @@ function updatePolygon() {
   const markers = Markers.find().fetch();
   const numMarkers = markers.length;
 
-  const numHullPoints = chainHull_2D(markers, numMarkers, hullPoints);
+  if (numMarkers > 1) {
+    const numHullPoints = chainHull_2D(markers, numMarkers, hullPoints);
 
-  // for (x in markers) {
-  //   const currMarker = markers[x];
-  //   let currCoords = {lat: currMarker.lat, lng: currMarker.lng};
-  //   coords.push(currCoords);
-  // }
+    // for (x in markers) {
+    //   const currMarker = markers[x];
+    //   let currCoords = {lat: currMarker.lat, lng: currMarker.lng};
+    //   coords.push(currCoords);
+    // }
 
-  activeArea = new google.maps.Polygon({
-    paths: hullPoints
-  });
-  activeArea.setMap(GoogleMaps.maps.map.instance);
+    activeArea = new google.maps.Polygon({
+      paths: hullPoints,
+      fillColor: "purple",
+      strokeColor: "purple"
+    });
+    activeArea.setMap(GoogleMaps.maps.map.instance);
+  }
 }
 
 function clearPolygon() {
@@ -285,31 +289,34 @@ function zoomToMarkers() {
 
 function getNewBounds() {
   const markerRange = getMarkerBounds();
-  const multipleMarkers = (markerRange.minLat !== markerRange.maxLat ||
-                            markerRange.minLng !== markerRange.maxLng);
 
   if (markerRange === null) {
     return null;
-  } else if (multipleMarkers) {
-    const latRange = markerRange.maxLat - markerRange.minLat,
-      lngRange = markerRange.maxLng - markerRange.minLng;
-
-    // displayMargin: The ratio of the marker range to add
-    //   to the edges of the view map view
-    const displayMargin = .1;
-
-    const displayMinLat = markerRange.minLat - displayMargin*latRange,
-      displayMaxLat = markerRange.maxLat + displayMargin*latRange,
-      displayMinLng = markerRange.minLng - displayMargin*lngRange,
-      displayMaxLng = markerRange.maxLng + displayMargin*lngRange;
-
-    return new google.maps.LatLngBounds(
-      new google.maps.LatLng(displayMinLat, displayMinLng),
-      new google.maps.LatLng(displayMaxLat, displayMaxLng)
-    );
   } else {
-    // Case for single Marker...
-    return null;
+    const multipleMarkers = (markerRange.minLat !== markerRange.maxLat ||
+                              markerRange.minLng !== markerRange.maxLng);
+
+    if (multipleMarkers) {
+      const latRange = markerRange.maxLat - markerRange.minLat,
+        lngRange = markerRange.maxLng - markerRange.minLng;
+
+      // displayMargin: The ratio of the marker range to add
+      //   to the edges of the view map view
+      const displayMargin = .1;
+
+      const displayMinLat = markerRange.minLat - displayMargin*latRange,
+        displayMaxLat = markerRange.maxLat + displayMargin*latRange,
+        displayMinLng = markerRange.minLng - displayMargin*lngRange,
+        displayMaxLng = markerRange.maxLng + displayMargin*lngRange;
+
+      return new google.maps.LatLngBounds(
+        new google.maps.LatLng(displayMinLat, displayMinLng),
+        new google.maps.LatLng(displayMaxLat, displayMaxLng)
+      );
+    } else {
+      // Case for single Marker...
+      return null;
+    }
   }
 }
 
