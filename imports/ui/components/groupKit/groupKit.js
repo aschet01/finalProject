@@ -4,6 +4,7 @@
 import { Locations } from '../../../api/locations/locations.js'
 import { Markers } from '../../../api/markers/markers.js';
 import { Places } from '../../../api/places/places.js';
+import { chainHull_2D } from '../../../api/convex_hull/convex_hull.js';
 import './groupKit.html';
 
 // Dictionary to hold Marker objeccts referenced by 
@@ -176,36 +177,22 @@ function getMarkerMean() {
 }
 
 function updatePolygon() {
-  // var triangleCoords = [
-  //   {lat: 25.774, lng: -80.190},
-  //   {lat: 18.466, lng: -66.118},
-  //   {lat: 32.321, lng: -64.757},
-  //   {lat: 25.774, lng: -80.190}
-  // ];
-
-  // var bermudaTriangle = new google.maps.Polygon({
-  //   paths: triangleCoords,
-  //   strokeColor: '#FF0000',
-  //   strokeOpacity: 0.8,
-  //   strokeWeight: 2,
-  //   fillColor: '#FF0000',
-  //   fillOpacity: 0.35
-  // });
-  // bermudaTriangle.setMap(GoogleMaps.maps.map.instance);
-
   clearPolygon();
 
-  let coords = [];
+  let hullPoints = [];
   const markers = Markers.find().fetch();
+  const numMarkers = markers.length;
 
-  for (x in markers) {
-    const currMarker = markers[x];
-    let currCoords = {lat: currMarker.lat, lng: currMarker.lng};
-    coords.push(currCoords);
-  }
+  const numHullPoints = chainHull_2D(markers, numMarkers, hullPoints);
+
+  // for (x in markers) {
+  //   const currMarker = markers[x];
+  //   let currCoords = {lat: currMarker.lat, lng: currMarker.lng};
+  //   coords.push(currCoords);
+  // }
 
   activeArea = new google.maps.Polygon({
-    paths: coords
+    paths: hullPoints
   });
   activeArea.setMap(GoogleMaps.maps.map.instance);
 }
@@ -293,8 +280,6 @@ function zoomToMarkers() {
   if (newBounds !== null) {
     const myMap = GoogleMaps.maps.map.instance;
     myMap.fitBounds(newBounds);
-    console.log("Map:", myMap.getBounds());
-    console.log("Planned:", newBounds);
   }
 }
 
@@ -363,3 +348,4 @@ function getMarkerBounds() {
     maxLng: maxLng
   } : null);
 }
+
