@@ -8,13 +8,28 @@ const mutedBlueStyle = [
   {
     featureType: "all",
     stylers: [
-      { saturation: -80 }
+      // { saturation: -20 }
+    ]
+  },{
+    featureType: "road.highway",
+    elementType: "geometry.stroke",
+    stylers: [
+      // {color: "#68C5E0"},
+      // {saturation: 20},
+      {visibility: "off"}
+    ]
+  },{
+    featureType: "road.highway",
+    elementType: "geometry.fill",
+    stylers: [
+      {color: "#8195A7"},
+      {saturation: 20},
     ]
   },{
     featureType: "road.arterial",
     elementType: "geometry",
     stylers: [
-      { hue: "#00ffee" },
+      { hue: "#00FFEE" },
       { saturation: 50 }
     ]
   },{
@@ -23,6 +38,88 @@ const mutedBlueStyle = [
     stylers: [
       { visibility: "off" }
     ]
+  }
+];
+
+// https://snazzymaps.com/style/25/blue-water
+const blueWater = [
+  {
+      "featureType": "administrative",
+      "elementType": "labels.text.fill",
+      "stylers": [
+          {
+              "color": "#444444"
+          }
+      ]
+  },
+  {
+      "featureType": "landscape",
+      "elementType": "all",
+      "stylers": [
+          {
+              "color": "#f2f2f2"
+          }
+      ]
+  },
+  {
+      "featureType": "poi",
+      "elementType": "all",
+      "stylers": [
+          {
+              "visibility": "off"
+          }
+      ]
+  },
+  {
+      "featureType": "road",
+      "elementType": "all",
+      "stylers": [
+          {
+              "saturation": -100
+          },
+          {
+              "lightness": 45
+          }
+      ]
+  },
+  {
+      "featureType": "road.highway",
+      "elementType": "all",
+      "stylers": [
+          {
+              "visibility": "simplified"
+          }
+      ]
+  },
+  {
+      "featureType": "road.arterial",
+      "elementType": "labels.icon",
+      "stylers": [
+          {
+              "visibility": "off"
+          }
+      ]
+  },
+  {
+      "featureType": "transit",
+      "elementType": "all",
+      "stylers": [
+          {
+              "visibility": "off"
+          }
+      ]
+  },
+  {
+      "featureType": "water",
+      "elementType": "all",
+      "stylers": [
+          {
+              "color": "#46bcec"
+          },
+          {
+              "visibility": "on"
+          }
+      ]
   }
 ];
 
@@ -133,7 +230,7 @@ Template.mapPanel.helpers({
       return {
         center: new google.maps.LatLng(41.3, -72.9),
         zoom: 9,
-        styles: greyStyle
+        styles: blueWater
       };
     }
   }
