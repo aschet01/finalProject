@@ -218,7 +218,7 @@ function zoomToMarkers() {
   // If there is only one marker
   if (newBounds === 1) {
     myMap.panTo(Markers.findOne());
-  } else if (newBounds !=- null) {
+  } else if (newBounds !== null) {
     myMap.fitBounds(newBounds);
   }
 }
