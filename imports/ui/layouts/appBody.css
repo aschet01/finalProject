@@ -47,3 +47,19 @@ html, body {
 .panel-heading > .dropdown {
   padding-left: 20%;
 }
+
+.dropdown-menu p {
+  text-align: center;
+}
+
+.place-type {
+  text-align: center;
+}
+
+.active-place-type {
+  background-color: #66FF71;
+}
+
+.inactive-place-type {
+  background-color: #FF4A4A;
+}

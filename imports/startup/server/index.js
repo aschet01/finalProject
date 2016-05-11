@@ -4,3 +4,4 @@
 import '../../api/locations/locations.js';
 import '../../api/markers/markers.js';
 import '../../api/places/places.js';
+import '../../api/placeTypes/placeTypes.js';
