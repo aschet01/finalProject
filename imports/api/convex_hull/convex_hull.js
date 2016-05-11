@@ -39,6 +39,9 @@ function isLeft(P0, P1, P2) {
 
 
 export function chainHull_2D(P, n, H) {
+    P.sort(sortPointY);
+    P.sort(sortPointX);
+
     // the output array H[] will be used as the stack
     var bot = 0,
     top = (-1); // indices for bottom and top of the stack
