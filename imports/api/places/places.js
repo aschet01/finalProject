@@ -5,25 +5,7 @@ import { Mongo } from 'meteor/mongo';
 export const Places = new Mongo.Collection('places');
 
 if (Meteor.isServer) {
-  Meteor.publish('places', function listPlaces(){
-    return Places.find();
+  Meteor.publish('places', function listPlaces(token){
+    return Places.find({sessionId: token});
   });
 }
-
-Meteor.methods({
-  'places.mySession'(sessionId) {
-    return Places.find({sessionId: sessionId}).fetch();
-  },
-
-  'places.insert'(newPlace) {
-    return Places.insert(newPlace);
-  },
-
-  'places.remove'(query) {
-    return Places.remove(query);
-  },
-
-  'places.findOne'(query) {
-    return Places.findOne(query);
-  }
-});

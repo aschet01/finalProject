@@ -6,14 +6,14 @@ import { Session } from 'meteor/session';
 import { Locations } from '../../../api/locations/locations.js'
 import { Markers } from '../../../api/markers/markers.js';
 import { Places } from '../../../api/places/places.js';
-import { PlaceTypes } from '../../../api/placeTypes/placeTypes.js';
 
 import { chainHull_2D } from '../../../api/convex_hull/convex_hull.js';
 
 if (Meteor.isClient) {
-  Meteor.subscribe('places');
-  Meteor.subscribe('locations');
-  Meteor.subscribe('markers');
+  const mySessionId = FlowRouter.getParam("id")
+  Meteor.subscribe('places', mySessionId);
+  Meteor.subscribe('locations', mySessionId);
+  Meteor.subscribe('markers', mySessionId);
 }
 
 export let markers = {};      // The actual google.maps.Markers
@@ -36,7 +36,7 @@ GoogleMaps.ready('map', function(map){
     anchor: new google.maps.Point(0, 32)
   };
 
-  Markers.find({sessionId: FlowRouter.getParam("id")}).observe({
+  Markers.find().observe({
     added: function (document) {
       let marker = new google.maps.Marker({
         position: new google.maps.LatLng(document.lat, document.lng),
@@ -114,7 +114,6 @@ export function changeLocationAndMarker(address, locationId, results, status) {
 function updateCenter() {
   clearPlaces();
   clearPolygon();
-
 
   if (centerMarker instanceof google.maps.Marker) {
     centerMarker.setMap(null);
@@ -271,12 +270,15 @@ function clearPolygon() {
 
 // Generating places near the center
 function placeSearch(point) {
+  console.info(point);
+  console.log("Places:", Places.find({sessionIf: FlowRouter.getParam("id")}).fetch());
   placeSearchOptions.location = point;
   placesService.nearbySearch(placeSearchOptions, readPlaces);
 }
 
 // PlacesService callback function
 function readPlaces(results, status, pagination) {
+  console.log("Places:", Places.find({sessionIf: FlowRouter.getParam("id")}).fetch());
   if (status === google.maps.places.PlacesServiceStatus.OK) {
     clearPlaces();
     let currPlace;

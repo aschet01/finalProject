@@ -6,7 +6,6 @@ import { Session } from 'meteor/session';
 import { Locations } from '../../../api/locations/locations.js'
 import { Markers } from '../../../api/markers/markers.js';
 import { Places } from '../../../api/places/places.js';
-import { PlaceTypes } from '../../../api/placeTypes/placeTypes.js';
 
 import { newLocationAndMarker } from '../groupLocations/groupLocations.js';
 import { changeLocationAndMarker } from '../groupLocations/groupLocations.js';
@@ -14,17 +13,17 @@ import { markers } from '../groupLocations/groupLocations.js';
 import './groupKit.html';
 
 if (Meteor.isClient) {
-  Meteor.subscribe('places');
-  Meteor.subscribe('locations');
-  Meteor.subscribe('markers');
-  Meteor.subscribe('placeTypes');
+  const mySessionToken = FlowRouter.getParam("id");
+  Meteor.subscribe('places', mySessionToken);
+  Meteor.subscribe('locations', mySessionToken);
+  Meteor.subscribe('markers', mySessionToken);
 }
 
 let currentPlace = {};
 
 Template.groupLocations.helpers({
   locations: function() {
-    return Locations.find({sessionId: FlowRouter.getParam("id")});
+    return Locations.find();
   }
 });
 
@@ -63,22 +62,11 @@ Template.groupLocations.events({
 
 Template.placeList.helpers({
   places: function() {
-    // let activeTypes = [];
-    // const placeTypes = PlaceTypes.find({display: true}).fetch();
-    // return Places.find({"types": {$in: activeTypes}});
-    return Places.find({sessionId: FlowRouter.getParam("id")});
+    return Places.find();
   },
-
-  placeTypes: function() {
-    return PlaceTypes.find();
-  }
 });
 
 Template.placeList.events({
-  "click .place-type": function(event) {
-    this.display = false;
-  },
-  
   "click .list-group-item": function(event) {
     if (currentPlace instanceof google.maps.Marker) {
       currentPlace.setMap(null);
