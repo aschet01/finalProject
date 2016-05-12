@@ -69,7 +69,6 @@ Template.placeList.helpers({
 
 Template.placeList.events({
   "click .place-type": function(event) {
-    console.log(this);
     this.display = false;
   },
   
@@ -79,10 +78,9 @@ Template.placeList.events({
       delete currentPlace;
     }
 
-    console.log(this);
-    currentPlace = new google.maps.Marker({
-      position: this.geometry.location,
-      map: GoogleMaps.maps.map.instance
-    });
+    // currentPlace = new google.maps.Marker({
+    //   position: this.geometry.location,
+    //   map: GoogleMaps.maps.map.instance
+    // });
   }
 });

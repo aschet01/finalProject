@@ -15,7 +15,7 @@ let centerMarker = {};
 let activeArea = {};          // Polygon
 let placeSearchOptions = {
   location: "",
-  radius: 400,
+  radius: 300,
   type: "food"
 };
 
@@ -108,6 +108,7 @@ export function changeLocationAndMarker(address, locationId, results, status) {
 function updateCenter() {
   clearPlaces();
   clearPolygon();
+
 
   if (centerMarker instanceof google.maps.Marker) {
     centerMarker.setMap(null);
@@ -265,19 +266,22 @@ function clearPolygon() {
 // Generating places near the center
 function placeSearch(point) {
   placeSearchOptions.location = point;
-  placesService.nearbySearch(placeSearchOptions, readPlaces);
+  setTimeout(function(){
+    return placesService.nearbySearch(placeSearchOptions, readPlaces);
+  }, 5000);
 }
 
 // PlacesService callback function
 function readPlaces(results, status, pagination) {
+  clearPlaces();
   if (status === google.maps.places.PlacesServiceStatus.OK) {
     let currPlace;
+    const currSessionId = FlowRouter.getParam("id");
+
     for (x in results) {
       currPlace = results[x];
-      console.log(currPlace);
-      duplicate = Places.findOne({place_id: currPlace.place_id,
-               sessionId: FlowRouter.getParam("id")});
-      if (duplicate === undefined) {
+      if (Places.findOne({place_id: currPlace.place_id, 
+                          sessionId: currSessionId}) === undefined) {
         Places.insert({
           place_id: currPlace.place_id,
           name: currPlace.name,
@@ -285,10 +289,8 @@ function readPlaces(results, status, pagination) {
           types: currPlace.types,
           lat: currPlace.geometry.location.lat(),
           lng: currPlace.geometry.location.lng(),
-          sessionId: FlowRouter.getParam("id")
+          sessionId: currSessionId
         });
-      } else {
-        console.log("Duplicate blocked:", duplicate);
       }
     }
     if (pagination.hasNextPage) {
@@ -301,8 +303,9 @@ function readPlaces(results, status, pagination) {
 
 function clearPlaces() {
   let ids = [];
-  const placeList = Places.find({sessionId: FlowRouter.getParam("id")}).fetch();
-
+  const currSessionId = FlowRouter.getParam("id");
+  const placeList = Places.find({sessionId: currSessionId}).fetch();
+  
   for (x in placeList) {
     Places.remove({_id: placeList[x]._id});
   }
