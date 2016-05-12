@@ -23,3 +23,5 @@ twbs:bootstrap
 dburles:google-maps
 kadira:flow-router
 kadira:blaze-layout
+random
+session

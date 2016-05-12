@@ -1,6 +1,8 @@
 // imports/ui/components/groupLocations/groupLocations.js
 // Called by imports/ui/components/groupKit/groupKit.js
 
+import { Session } from 'meteor/session';
+
 import { Locations } from '../../../api/locations/locations.js'
 import { Markers } from '../../../api/markers/markers.js';
 import { Places } from '../../../api/places/places.js';
@@ -8,12 +10,13 @@ import { PlaceTypes } from '../../../api/placeTypes/placeTypes.js';
 
 import { chainHull_2D } from '../../../api/convex_hull/convex_hull.js';
 
-let markers = {};             // The actual google.maps.Markers
+export let markers = {};             // The actual google.maps.Markers
 let centerMarker = {};
 let activeArea = {};          // Polygon
 let placeSearchOptions = {
   location: "",
-  radius: 2000
+  radius: 2000,
+  type: "food"
 };
 
 GoogleMaps.ready('map', function(map){
@@ -27,7 +30,7 @@ GoogleMaps.ready('map', function(map){
     anchor: new google.maps.Point(0, 32)
   };
 
-  Markers.find().observe({
+  Markers.find({sessionId: FlowRouter.getParam("id")}).observe({
     added: function (document) {
       let marker = new google.maps.Marker({
         position: new google.maps.LatLng(document.lat, document.lng),
@@ -68,8 +71,10 @@ export function newLocationAndMarker(address, results, status) {
     let newLocation = {
       location: address,
       createdAt: new Date(),
-      coords: newCoords
+      coords: newCoords,
+      sessionId: FlowRouter.getParam("id")
     }
+
     // Get the new _id for the matching marker
     const newId = Locations.insert(newLocation);
 
@@ -77,7 +82,7 @@ export function newLocationAndMarker(address, results, status) {
     const newLat = newCoords.lat();
     const newLng = newCoords.lng();
 
-    Markers.insert({_id: newId, lat: newLat, lng: newLng});
+    Markers.insert({_id: newId, lat: newLat, lng: newLng, sessionId: FlowRouter.getParam("id")});
 
   } else {
     alert("Could not place address: " + status);
@@ -127,7 +132,7 @@ function updateCenter() {
 function getMarkerMean() {
   let latSum = 0, lngSum = 0, count = 0;
 
-  markerList = Markers.find().fetch();
+  markerList = Markers.find({sessionId: FlowRouter.getParam("id")}).fetch();
 
   for (x in markerList) {
     let currMarker = markerList[x];
@@ -191,7 +196,7 @@ function getNewBounds() {
 
 function getMarkerBounds() {
   let minLat = 100, maxLat = 0, minLng = 0, maxLng = 0;
-  const currMarkers = Markers.find().fetch();
+  const currMarkers = Markers.find({sessionId: FlowRouter.getParam("id")}).fetch();
   for (x in currMarkers) {
     const currLat = currMarkers[x].lat, currLng = currMarkers[x].lng;
 
@@ -228,7 +233,7 @@ function getMarkerBounds() {
 // Polygon functions
 function updatePolygon() {
   let hullPoints = [];
-  const markerList = Markers.find().fetch();
+  const markerList = Markers.find({sessionId: FlowRouter.getParam("id")}).fetch();
   const numMarkers = markerList.length;
 
   if (numMarkers > 1) {
@@ -269,7 +274,13 @@ function readPlaces(results, status, pagination) {
     for (x in results) {
       currPlace = results[x];
       if (Places.find({name: currPlace.name}).fetch() !== {}) {
-        Places.insert(currPlace);
+        Places.insert({
+          _id: currPlace.place_id,
+          name: currPlace.name,
+          vicinity: currPlace.vicinity,
+          types: currPlace.types,
+          sessionId: FlowRouter.getParam("id")
+        });
       } else {
         console.log("Duplicate blocked");
       }

@@ -1,6 +1,8 @@
 // imports/ui/components/groupKit/groupKit.js
 // Called by imports/ui/layouts/appBody/appBody.js
 
+import { Session } from 'meteor/session';
+
 import { Locations } from '../../../api/locations/locations.js'
 import { Markers } from '../../../api/markers/markers.js';
 import { Places } from '../../../api/places/places.js';
@@ -8,36 +10,14 @@ import { PlaceTypes } from '../../../api/placeTypes/placeTypes.js';
 
 import { newLocationAndMarker } from '../groupLocations/groupLocations.js';
 import { changeLocationAndMarker } from '../groupLocations/groupLocations.js';
+import { markers } from '../groupLocations/groupLocations.js';
 import './groupKit.html';
 
 let currentPlace = {};
 
-// const placeTypeList = [
-//   {name: "Library", display: true},
-//   {name: "Food", display: false},
-//   {name: "Park", display: true},
-//   {name: "Shopping Mall", display: true},
-// ];
-
-// const currElems = PlaceTypes.find().fetch();
-// console.log(currElems);
-// for (x in currElems) {
-//   let currType = currElems[x];
-//   console.log(currType);
-//   PlaceTypes.remove({_id: currType._id});
-// }
-
-// for (x in placeTypeList) {
-//   currType = placeTypeList[x];
-//   if (PlaceTypes.findOne({name: currType.name}) === null) {
-//     PlaceTypes.insert(currType);
-//   }
-// }
-
-
 Template.groupLocations.helpers({
   locations: function() {
-    return Locations.find({});
+    return Locations.find({sessionId: FlowRouter.getParam("id")});
   }
 });
 
@@ -71,6 +51,10 @@ Template.groupLocations.events({
   "click .removeLocation": function(event) {
     Locations.remove({_id: this._id});
     Markers.remove({_id: this._id});
+  },
+
+  "click #showMarkers": function(event) {
+    console.log(markers);
   }
 });
 
@@ -79,7 +63,7 @@ Template.placeList.helpers({
     // let activeTypes = [];
     // const placeTypes = PlaceTypes.find({display: true}).fetch();
     // return Places.find({"types": {$in: activeTypes}});
-    return PlaceTypes.find({});
+    return Places.find({sessionId: FlowRouter.getParam("id")});
   },
 
   placeTypes: function() {
