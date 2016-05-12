@@ -10,12 +10,12 @@ import { PlaceTypes } from '../../../api/placeTypes/placeTypes.js';
 
 import { chainHull_2D } from '../../../api/convex_hull/convex_hull.js';
 
-export let markers = {};             // The actual google.maps.Markers
+export let markers = {};      // The actual google.maps.Markers
 let centerMarker = {};
 let activeArea = {};          // Polygon
 let placeSearchOptions = {
   location: "",
-  radius: 2000,
+  radius: 400,
   type: "food"
 };
 
@@ -71,7 +71,8 @@ export function newLocationAndMarker(address, results, status) {
     let newLocation = {
       location: address,
       createdAt: new Date(),
-      coords: newCoords,
+      lat: newCoords.lat(),
+      lng: newCoords.lng(),
       sessionId: FlowRouter.getParam("id")
     }
 
@@ -273,16 +274,21 @@ function readPlaces(results, status, pagination) {
     let currPlace;
     for (x in results) {
       currPlace = results[x];
-      if (Places.find({name: currPlace.name}).fetch() !== {}) {
+      console.log(currPlace);
+      duplicate = Places.findOne({place_id: currPlace.place_id,
+               sessionId: FlowRouter.getParam("id")});
+      if (duplicate === undefined) {
         Places.insert({
-          _id: currPlace.place_id,
+          place_id: currPlace.place_id,
           name: currPlace.name,
           vicinity: currPlace.vicinity,
           types: currPlace.types,
+          lat: currPlace.geometry.location.lat(),
+          lng: currPlace.geometry.location.lng(),
           sessionId: FlowRouter.getParam("id")
         });
       } else {
-        console.log("Duplicate blocked");
+        console.log("Duplicate blocked:", duplicate);
       }
     }
     if (pagination.hasNextPage) {
@@ -295,12 +301,9 @@ function readPlaces(results, status, pagination) {
 
 function clearPlaces() {
   let ids = [];
-  const placeList = Places.find().fetch();
-  for (x in placeList) {
-    ids.push(placeList[x]._id);
-  }
+  const placeList = Places.find({sessionId: FlowRouter.getParam("id")}).fetch();
 
-  for (x in ids) {
-    Places.remove({_id: ids[x]});
+  for (x in placeList) {
+    Places.remove({_id: placeList[x]._id});
   }
 }

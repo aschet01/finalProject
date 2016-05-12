@@ -51,10 +51,6 @@ Template.groupLocations.events({
   "click .removeLocation": function(event) {
     Locations.remove({_id: this._id});
     Markers.remove({_id: this._id});
-  },
-
-  "click #showMarkers": function(event) {
-    console.log(markers);
   }
 });
 
@@ -84,8 +80,6 @@ Template.placeList.events({
     }
 
     console.log(this);
-    console.log(this.geometry);
-    console.log(this.geometry.location);
     currentPlace = new google.maps.Marker({
       position: this.geometry.location,
       map: GoogleMaps.maps.map.instance
