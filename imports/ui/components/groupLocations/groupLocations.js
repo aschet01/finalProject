@@ -76,7 +76,6 @@ export function newLocationAndMarker(address, results, status) {
     // Create Location document with result coordinates
     let newLocation = {
       location: address,
-      createdAt: new Date(),
       lat: newCoords.lat(),
       lng: newCoords.lng(),
       sessionId: FlowRouter.getParam("id")
