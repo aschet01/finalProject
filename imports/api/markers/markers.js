@@ -3,7 +3,12 @@
 
 import { Mongo } from 'meteor/mongo';
 export const Markers = new Mongo.Collection('markers');
-import { Template } from 'meteor/templating';
+
+if (Meteor.isServer) {
+  Meteor.publish('markers', function listPlaces(){
+    return Markers.find({});
+  });
+}
 
 // var markers = {};
 

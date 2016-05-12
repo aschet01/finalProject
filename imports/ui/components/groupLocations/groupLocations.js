@@ -10,6 +10,12 @@ import { PlaceTypes } from '../../../api/placeTypes/placeTypes.js';
 
 import { chainHull_2D } from '../../../api/convex_hull/convex_hull.js';
 
+if (Meteor.isClient) {
+  Meteor.subscribe('places');
+  Meteor.subscribe('locations');
+  Meteor.subscribe('markers');
+}
+
 export let markers = {};      // The actual google.maps.Markers
 let centerMarker = {};
 let activeArea = {};          // Polygon
@@ -305,6 +311,6 @@ function clearPlaces() {
   const placeList = Places.find({sessionId: currSessionId}).fetch();
   
   for (x in placeList) {
-    Places.remove({_id: placeList[x]._id});
+    Meteor.call('places.remove', {_id: placeList[x]._id});
   }
 }

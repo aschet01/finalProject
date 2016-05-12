@@ -13,6 +13,13 @@ import { changeLocationAndMarker } from '../groupLocations/groupLocations.js';
 import { markers } from '../groupLocations/groupLocations.js';
 import './groupKit.html';
 
+if (Meteor.isClient) {
+  Meteor.subscribe('places');
+  Meteor.subscribe('locations');
+  Meteor.subscribe('markers');
+  Meteor.subscribe('placeTypes');
+}
+
 let currentPlace = {};
 
 Template.groupLocations.helpers({
