@@ -11,9 +11,9 @@ import { chainHull_2D } from '../../../api/convex_hull/convex_hull.js';
 
 if (Meteor.isClient) {
   const mySessionId = FlowRouter.getParam("id")
-  Meteor.subscribe('places', mySessionId);
-  Meteor.subscribe('locations', mySessionId);
-  Meteor.subscribe('markers', mySessionId);
+  Meteor.subscribe('places');
+  Meteor.subscribe('locations');
+  Meteor.subscribe('markers');
 }
 
 export let markers = {};      // The actual google.maps.Markers
@@ -21,7 +21,7 @@ let centerMarker = {};
 let activeArea = {};          // Polygon
 let placeSearchOptions = {
   location: "",
-  radius: 300,
+  radius: 1000,
   type: "food"
 };
 
@@ -36,7 +36,7 @@ GoogleMaps.ready('map', function(map){
     anchor: new google.maps.Point(0, 32)
   };
 
-  Markers.find().observe({
+  Markers.find({sessionId: FlowRouter.getParam("id")}).observe({
     added: function (document) {
       let marker = new google.maps.Marker({
         position: new google.maps.LatLng(document.lat, document.lng),
@@ -89,7 +89,12 @@ export function newLocationAndMarker(address, results, status) {
     const newLat = newCoords.lat();
     const newLng = newCoords.lng();
 
-    Markers.insert({_id: newId, lat: newLat, lng: newLng, sessionId: FlowRouter.getParam("id")});
+    Markers.insert({
+      _id: newId,
+      lat: newLat,
+      lng: newLng,
+      sessionId: FlowRouter.getParam("id")
+    });
 
   } else {
     alert("Could not place address: " + status);
@@ -100,10 +105,15 @@ export function changeLocationAndMarker(address, locationId, results, status) {
   if (status === google.maps.GeocoderStatus.OK) {
     const newCoords = results[0].geometry.location;
     Locations.update({_id: locationId}, 
-                     {$set: {location: address, coords: newCoords}});
+                     {$set: {location: address,
+                      lat: newCoords.lat(),
+                      lng: newCoords.lng()}
+                    });
 
     Markers.update({_id: locationId},
-                   {$set: {lat: newCoords.lat(), lng: newCoords.lng()}});
+                   {$set: {lat: newCoords.lat(),
+                           lng: newCoords.lng()}
+                  });
 
   } else {
     alert("Could not place address: " + status);
@@ -162,7 +172,7 @@ function zoomToMarkers() {
 
   // If there is only one marker
   if (newBounds === 1) {
-    myMap.panTo(Markers.findOne());
+    myMap.panTo(Markers.findOne({sessionId: FlowRouter.getParam("id")}));
   } else if (newBounds !== null) {
     myMap.fitBounds(newBounds);
   }
@@ -246,12 +256,6 @@ function updatePolygon() {
   if (numMarkers > 1) {
     const numHullPoints = chainHull_2D(markerList, numMarkers, hullPoints);
 
-    // for (x in markers) {
-    //   const currMarker = markers[x];
-    //   let currCoords = {lat: currMarker.lat, lng: currMarker.lng};
-    //   coords.push(currCoords);
-    // }
-
     activeArea = new google.maps.Polygon({
       paths: hullPoints,
       fillColor: "purple",
@@ -270,15 +274,12 @@ function clearPolygon() {
 
 // Generating places near the center
 function placeSearch(point) {
-  console.info(point);
-  console.log("Places:", Places.find({sessionIf: FlowRouter.getParam("id")}).fetch());
   placeSearchOptions.location = point;
   placesService.nearbySearch(placeSearchOptions, readPlaces);
 }
 
 // PlacesService callback function
 function readPlaces(results, status, pagination) {
-  console.log("Places:", Places.find({sessionIf: FlowRouter.getParam("id")}).fetch());
   if (status === google.maps.places.PlacesServiceStatus.OK) {
     clearPlaces();
     let currPlace;
@@ -313,6 +314,6 @@ function clearPlaces() {
   const placeList = Places.find({sessionId: currSessionId}).fetch();
   
   for (x in placeList) {
-    Meteor.call('places.remove', {_id: placeList[x]._id});
+    Places.remove({_id: placeList[x]._id});
   }
 }

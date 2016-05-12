@@ -8,7 +8,7 @@ import { Markers } from '../../../api/markers/markers.js';
 import { Places } from '../../../api/places/places.js';
 
 import { newLocationAndMarker } from '../groupLocations/groupLocations.js';
-import { changeLocationAndMarker } from '../groupLocations/groupLocations.js';
+import {changeLocationAndMarker} from '../groupLocations/groupLocations.js';
 import { markers } from '../groupLocations/groupLocations.js';
 import './groupKit.html';
 
@@ -23,7 +23,7 @@ let currentPlace = {};
 
 Template.groupLocations.helpers({
   locations: function() {
-    return Locations.find();
+    return Locations.find({sessionId: FlowRouter.getParam("id")});
   }
 });
 
@@ -62,7 +62,7 @@ Template.groupLocations.events({
 
 Template.placeList.helpers({
   places: function() {
-    return Places.find();
+    return Places.find({sessionId: FlowRouter.getParam("id")});
   },
 });
 
