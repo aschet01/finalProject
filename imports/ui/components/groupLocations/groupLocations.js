@@ -266,15 +266,13 @@ function clearPolygon() {
 // Generating places near the center
 function placeSearch(point) {
   placeSearchOptions.location = point;
-  setTimeout(function(){
-    return placesService.nearbySearch(placeSearchOptions, readPlaces);
-  }, 5000);
+  placesService.nearbySearch(placeSearchOptions, readPlaces);
 }
 
 // PlacesService callback function
 function readPlaces(results, status, pagination) {
-  clearPlaces();
   if (status === google.maps.places.PlacesServiceStatus.OK) {
+    clearPlaces();
     let currPlace;
     const currSessionId = FlowRouter.getParam("id");
 
