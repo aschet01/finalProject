@@ -4,7 +4,7 @@
 import { Session } from 'meteor/session';
 
 import { Locations } from '../../../api/locations/locations.js'
-import { Markers } from '../../../api/markers/markers.js';
+// import { Markers } from '../../../api/markers/markers.js';
 import { Places } from '../../../api/places/places.js';
 
 import { newLocationAndMarker } from '../groupLocations/groupLocations.js';
@@ -16,7 +16,7 @@ if (Meteor.isClient) {
   const mySessionToken = FlowRouter.getParam("id");
   Meteor.subscribe('places', mySessionToken);
   Meteor.subscribe('locations', mySessionToken);
-  Meteor.subscribe('markers', mySessionToken);
+  // Meteor.subscribe('markers', mySessionToken);
 }
 
 let currentPlace = {};
@@ -56,7 +56,7 @@ Template.groupLocations.events({
 
   "click .removeLocation": function(event) {
     Locations.remove({_id: this._id});
-    Markers.remove({_id: this._id});
+    // Markers.remove({_id: this._id});
   }
 });
 
