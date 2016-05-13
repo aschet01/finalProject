@@ -4,7 +4,6 @@
 import { Session } from 'meteor/session';
 
 import { Locations } from '../../../api/locations/locations.js'
-// import { Markers } from '../../../api/markers/markers.js';
 import { Places } from '../../../api/places/places.js';
 
 import { chainHull_2D } from '../../../api/convex_hull/convex_hull.js';
@@ -13,7 +12,6 @@ if (Meteor.isClient) {
   const mySessionId = FlowRouter.getParam("id")
   Meteor.subscribe('places');
   Meteor.subscribe('locations');
-  // Meteor.subscribe('markers');
 }
 
 export let markers = {};      // The actual google.maps.Markers
@@ -84,17 +82,6 @@ export function newLocationAndMarker(address, results, status) {
     // Get the new _id for the matching marker
     const newId = Locations.insert(newLocation);
 
-    // //  Create Marker document 
-    // const newLat = newCoords.lat();
-    // const newLng = newCoords.lng();
-
-    // Markers.insert({
-    //   _id: newId,
-    //   lat: newLat,
-    //   lng: newLng,
-    //   sessionId: FlowRouter.getParam("id")
-    // });
-
   } else {
     alert("Could not place address: " + status);
   }
@@ -108,11 +95,6 @@ export function changeLocationAndMarker(address, locationId, results, status) {
                       lat: newCoords.lat(),
                       lng: newCoords.lng()}
                     });
-
-    // Markers.update({_id: locationId},
-    //                {$set: {lat: newCoords.lat(),
-    //                        lng: newCoords.lng()}
-    //               });
 
   } else {
     alert("Could not place address: " + status);
@@ -148,7 +130,6 @@ function updateCenter() {
 function getMarkerMean() {
   let latSum = 0, lngSum = 0, count = 0;
 
-  // markerList = Markers.find({sessionId: FlowRouter.getParam("id")}).fetch();
   const locationList = Locations.find({sessionId: FlowRouter.getParam("id")}).fetch();
 
   for (x in locationList) {
@@ -170,11 +151,11 @@ function zoomToMarkers() {
   const newBounds = getNewBounds();
   const myMap = GoogleMaps.maps.map.instance;
 
-  // If there is only one marker
+  // If there is only one location
   if (newBounds === 1) {
-    // myMap.panTo(Markers.findOne({sessionId: FlowRouter.getParam("id")}));
     const soleLocation = Locations.findOne({sessionId: FlowRouter.getParam("id")});
-    myMap.panTo({soleLocation.lat, soleLocation.lng});
+    const newCenter = new google.maps.LatLng(soleLocation.lat, soleLocation.lng);
+    myMap.panTo(newCenter);
   } else if (newBounds !== null) {
     myMap.fitBounds(newBounds);
   }
@@ -215,7 +196,6 @@ function getNewBounds() {
 
 function getMarkerBounds() {
   let minLat = 100, maxLat = 0, minLng = 0, maxLng = 0;
-  // const currMarkers = Markers.find({sessionId: FlowRouter.getParam("id")}).fetch();
   const currLocations = Locations.find({sessionId: FlowRouter.getParam("id")}).fetch();
 
   for (x in currLocations) {

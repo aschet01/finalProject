@@ -4,7 +4,6 @@
 import { Session } from 'meteor/session';
 
 import { Locations } from '../../../api/locations/locations.js'
-// import { Markers } from '../../../api/markers/markers.js';
 import { Places } from '../../../api/places/places.js';
 
 import { newLocationAndMarker } from '../groupLocations/groupLocations.js';
@@ -16,7 +15,6 @@ if (Meteor.isClient) {
   const mySessionToken = FlowRouter.getParam("id");
   Meteor.subscribe('places', mySessionToken);
   Meteor.subscribe('locations', mySessionToken);
-  // Meteor.subscribe('markers', mySessionToken);
 }
 
 let currentPlace = {};
@@ -56,7 +54,6 @@ Template.groupLocations.events({
 
   "click .removeLocation": function(event) {
     Locations.remove({_id: this._id});
-    // Markers.remove({_id: this._id});
   }
 });
 
@@ -64,18 +61,4 @@ Template.placeList.helpers({
   places: function() {
     return Places.find({sessionId: FlowRouter.getParam("id")});
   },
-});
-
-Template.placeList.events({
-  "click .list-group-item": function(event) {
-    if (currentPlace instanceof google.maps.Marker) {
-      currentPlace.setMap(null);
-      delete currentPlace;
-    }
-
-    // currentPlace = new google.maps.Marker({
-    //   position: this.geometry.location,
-    //   map: GoogleMaps.maps.map.instance
-    // });
-  }
 });
