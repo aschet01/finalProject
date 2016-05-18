@@ -9,8 +9,8 @@
 </template>
 
 <template name="groupLocations">
-  <div class="well-wrapper">
-    <div class="well half-pad-top med-height">
+  <div class="med-height-wrapper pad-top">
+    <div class="well">
 
       {{#each locations}}
         <form class="form-horizontal existingLocation">
@@ -29,23 +29,41 @@
       </form>
 
     </div>
-  </div>  
+  </div>
 </template>
 
 
 <template name="placeList">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">Nearby Places</h3>
-    </div>
+  <div class="med-height-wrapper half-pad-top">
+    <div class="panel panel-default">
 
-    <ul class="list-group">
-      {{#each places}}
-        <li class="list-group-item">
-          {{name}}<br>
-          {{vicinity}}<br>
-        </li>
-      {{/each}}
-    </ul>
+      <div class="panel-heading">
+        <h3 class="panel-title">Nearby Places</h3>
+
+  <!--  <div class="dropdown">
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Show Types
+            <span class="caret"></span>
+          </button>
+
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+            {{#each placeTypes}}
+              <li class="place-type {{#if display}}active-place-type{{else}}inactive-place-type{{/if}}">
+                {{name}}
+              </li>
+            {{/each}}
+          </ul>
+        </div> -->
+      </div>
+
+      <ul class="list-group full-height-area">
+        {{#each places}}
+          <li class="list-group-item">
+            {{name}}<br>
+            {{vicinity}}<br>
+          </li>
+        {{/each}}
+      </ul>
+    </div>
   </div>
 </template>

@@ -3,3 +3,9 @@
 
 import { Mongo } from 'meteor/mongo';
 export const Locations = new Mongo.Collection('locations');
+
+if (Meteor.isServer) {
+  Meteor.publish('locations', function listLocations(){
+    return Locations.find();
+  });
+}
