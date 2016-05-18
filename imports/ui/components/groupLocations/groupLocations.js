@@ -19,7 +19,7 @@ let centerMarker = {};
 let activeArea = {};          // Polygon
 let placeSearchOptions = {
   location: "",
-  radius: 1000,
+  radius: 2000,
   type: "food"
 };
 
