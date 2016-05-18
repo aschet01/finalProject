@@ -7,7 +7,7 @@ import "../../ui/layouts/appBody.js";
 
 Meteor.startup( function() {
   GoogleMaps.load({
-    key: Meteor.settings.public.apiKey,
+    key: Meteor.settings.public.devKey,
     libraries: "places"
   });
 });
